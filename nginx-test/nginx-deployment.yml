@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx # Name of the deployment
+  namespace: default # Name of the namespace
+  labels:
+    app: nginx # Name of your application
+spec:
+  selector:
+    matchLabels:
+      app: nginx # Name of your application
+  replicas: 1 # Number of replicas
+  template:
+    metadata:
+      labels:
+        app: nginx # Name of your application
+    spec:
+      containers:
+      - name: nginx # Name of the container
+        image: nginx:latest # The image you want to run
+        ports:
+        - containerPort: 80 # The port that your application uses
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  nginx
+  namespace: default
+spec:
+  selector:
+    app:  nginx
+  type:  ClusterIP
+  ports:
+  - name:  http
+    port:  80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`example.domain.com`)
+      services:
+      - kind: Service 
+        name: nginx # Pointing to the Service created
+        namespace: default
+        passHostHeader: true
+        port: 80 # This port references the Service that we are creating above this IngressRoute
+        responseForwarding:
+          flushInterval: 1ms
+        scheme: http
+        sticky:
+          cookie:
+            httpOnly: true
+            name: nginx_lvl
+            secure: true
+            sameSite: strict
+      middlewares:
+        - name: secured@file # This references the traefik-config.yml config file that we created
+  tls:
+    certResolver: cloudflare

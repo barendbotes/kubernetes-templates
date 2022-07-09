@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-config
+  namespace: traefik
+data:
+  traefik-config.yaml: |
+    http:
+      routers:
+        webserver1:
+          entryPoints:
+            - "websecure"
+          rule: "Host(`webserver1.example.com`)"
+          tls: {}
+          service: webserver1
+          middlewares:
+            - secured
+        webserver2:
+          entryPoints:
+            - "websecure"
+          rule: "Host(`webserver2.example.com`)"
+          tls: {}
+          service: webserver2
+          middlewares:
+            - secured
+
+      services:
+        webserver1:
+          loadBalancer:
+            servers:
+              - url: "https://192.168.1.1"
+            sticky:
+              cookie:
+                name: webserver1_lvl
+                secure: true
+                httpOnly: true
+                SameSite: strict
+        webserver2:
+          loadBalancer:
+            servers:
+              - url: "https://192.168.1.2"
+            sticky:
+              cookie:
+                name: webserver2_lvl
+                secure: true
+                httpOnly: true
+                SameSite: strict
+
+      middlewares:
+        addprefix-wiki:
+          addPrefix:
+            prefix: "/admin"
+
+        addprefix-guacd:
+          addPrefix:
+            prefix: "/guacamole"
+
+        default-headers:
+          headers:
+            frameDeny: true
+            browserXssFilter: true
+            contentTypeNosniff: true
+            forceSTSHeader: true
+            stsIncludeSubdomains: true
+            stsPreload: true
+            stsSeconds: 15552000
+            customFrameOptionsValue: SAMEORIGIN
+            customRequestHeaders:
+              X-Forwarded-Proto: https
+
+        default-ratelimit:
+          rateLimit:
+            average: 100
+            burst: 50
+            period: 10s
+
+        default-whitelist:
+          ipWhiteList:
+            sourceRange:
+              - "10.0.0.0/8"
+              - "192.168.0.0/16"
+              - "172.16.0.0/12"
+
+        secured:
+          chain:
+            middlewares:
+            - default-ratelimit
+            - default-headers
+

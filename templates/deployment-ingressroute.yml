@@ -1,0 +1,30 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: application
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`example.domain.com`)
+      services:
+      - kind: Service
+        name: application
+        namespace: default
+        passHostHeader: true
+        port: 80
+        responseForwarding:
+          flushInterval: 1ms
+        scheme: http
+        sticky:
+          cookie:
+            httpOnly: true
+            name: application_lvl
+            secure: true
+            sameSite: strict
+      middlewares:
+        - name: secured@file # This references the traefik-config.yml config file that we created
+  tls:
+    certResolver: cloudflare

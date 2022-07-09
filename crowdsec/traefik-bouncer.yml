@@ -1,0 +1,4 @@
+# helm install -n traefik traefik-bouncer crowdsec/crowdsec-traefik-bouncer -f traefik-bouncer.yml
+bouncer:
+  crowdsec_bouncer_api_key: super-secure-bouncer-api-key
+  crowdsec_agent_host: "crowdsec-service.traefik.svc.cluster.local:8080"

@@ -1,0 +1,35 @@
+container_runtime: containerd
+agent:
+  # To specify each pod you want to process it logs (pods present in the node)
+  acquisition:
+    # The namespace where the pod is located
+    - namespace: traefik
+      # The pod name
+      podName: traefik-*
+      # as in crowdsec configuration, we need to specify the program name so the parser will match and parse logs
+      program: traefik
+  # Those are ENV variables
+  env:
+    # As we are running Nginx, we want to install the Nginx collection
+    - name: PARSERS
+      value: "crowdsecurity/cri-logs"
+    - name: COLLECTIONS
+      value: "crowdsecurity/traefik"
+    - name: DISABLE_PARSERS
+      value: "crowdsecurity/whitelists"
+lapi:
+  dashboard:
+    enabled: false
+    ingress:
+      host: dashboard.local
+      enabled: true
+  env:
+    - name: ENROLL_KEY
+      value: "your-crowdsec-online-key"
+    - name: ENROLL_INSTANCE_NAME
+      value: "kubernetes-cluster"
+    - name: ENROLL_TAGS
+      value: "k3s rancher prod"
+    # If it's a test, we don't want to share signals with CrowdSec so disable the Online API.
+    #- name: DISABLE_ONLINE_API
+    #  value: "true"
