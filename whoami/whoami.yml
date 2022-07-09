@@ -40,7 +40,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`example.domain.com`)
+      match: Host(`whoami.domain.com`)
       services:
       - kind: Service
         name: whoami-service
