@@ -152,7 +152,7 @@ postgresql:
   ## Persistent Volume Storage configuration.
   ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   ##
-  postgresqlexistingSecret: wikijs-postgresql
+  # postgresqlexistingSecret: wikijs-postgresql
 
   replication:
     ## Enable PostgreSQL replication (primary/secondary)
