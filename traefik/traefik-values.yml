@@ -32,7 +32,7 @@ additionalArguments:
   - --entrypoints.websecure.http.tls.domains[0].sans=*.example.com
   - --entrypoints.websecure.http.tls.domains[1].main=acmecorp.com
   - --entrypoints.websecure.http.tls.domains[1].sans=*.acmecorp.com
-  - --entrypoints.websecure.http.middlewares=traefik-traefik-bouncer@kubernetescrd
+
 
 # Generic (replace with your DNS provider):
 #  - --certificatesresolvers.generic.acme.dnschallenge.provider=generic

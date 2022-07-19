@@ -61,6 +61,6 @@ spec:
             secure: true
             sameSite: strict
       middlewares:
-        - name: secured@file # This references the traefik-config.yml config file that we created
+        - name: default-secured-chain@kubernetescrd # This references the traefik middleware that we created
   tls:
     certResolver: cloudflare
