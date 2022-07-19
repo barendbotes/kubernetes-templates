@@ -81,9 +81,13 @@ data:
               - "192.168.0.0/16"
               - "172.16.0.0/12"
 
+        default-bouncer
+          forwardAuth:
+            address: http://traefik-bouncer-service.traefik/api/v1/forwardAuth
+
         secured:
           chain:
             middlewares:
+            - default-bouncer
             - default-ratelimit
             - default-headers
-
